@@ -1,10 +1,10 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice } from '@reduxjs/toolkit';
 
 const errorSlice = createSlice({
-  name: "error",
+  name: 'API',
   initialState: {
     apiLoading: false,
-    error: "",
+    apiError: '',
   },
   reducers: {
     apiLoading: (state, action) => {

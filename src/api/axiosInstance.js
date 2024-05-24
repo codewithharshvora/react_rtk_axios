@@ -3,11 +3,11 @@ import axios from 'axios';
 import store from '../redux/store';
 import { apiLoading, logAPIError } from '../redux/reducers/commonSlice';
 
-export const Axios = axios.create({
-  baseURL: ''
+const axiosInstance = axios.create({
+  baseURL: '',
 });
 
-Axios.interceptors.request.use(
+axiosInstance.interceptors.request.use(
   (config) => {
     store.dispatch(apiLoading(true));
     const token = localStorage.getItem('token');
@@ -19,10 +19,10 @@ Axios.interceptors.request.use(
   (error) => {
     store.dispatch(logAPIError(`Request error: ${error.message}`));
     return Promise.reject(error);
-  }
+  },
 );
 
-Axios.interceptors.response.use(
+axiosInstance.interceptors.response.use(
   (response) => {
     store.dispatch(apiLoading(false));
     return response;
@@ -35,6 +35,8 @@ Axios.interceptors.response.use(
     }
 
     store.dispatch(logAPIError(`Response error: ${error.message}`));
-    return Promise.reject(error);
-  }
+    return Promise.reject(error.message);
+  },
 );
+
+export default axiosInstance;

@@ -1,17 +1,18 @@
-// src/actions/auth.js
+import { postData } from '../../api/apiUtils';
+import { loginSuccess, loginFailure } from '../reducers/authSlice';
 
-import { loginSuccess, loginFailure } from "../reducers/authSlice";
-import { Axios } from "../../api/config";
+import { createAsyncThunk } from '@reduxjs/toolkit';
 
-export const login = (username, password) => async (dispatch) => {
+export const login = createAsyncThunk('auth/login', async (data, thunkAPI) => {
   try {
-    // const response = { data: { token: "test123" } }; // await Axios.post("/login", { username, password });
-    const response = await Axios.post("/login", { username, password });
-
-    const token = response.data.token; // Assuming the token is returned from the server
-    localStorage.setItem("token", token);
-    dispatch(loginSuccess(token));
+    const response = await postData('/login', data);
+    thunkAPI.dispatch(loginSuccess(response)); // Dispatch success action
+    return response;
   } catch (error) {
-    dispatch(loginFailure(error.toString()));
+    console.log('error', error);
+    thunkAPI.dispatch(loginFailure(error)); // Dispatch failure action
+    return thunkAPI.rejectWithValue(
+      error.response ? error.response.data : error.message,
+    );
   }
-};
+});
